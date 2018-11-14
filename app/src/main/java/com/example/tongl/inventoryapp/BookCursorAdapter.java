@@ -1,13 +1,17 @@
 package com.example.tongl.inventoryapp;
 
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.tongl.inventoryapp.data.BookContract.BookEntry;
 
@@ -54,17 +58,18 @@ public class BookCursorAdapter extends CursorAdapter {
      *                correct row.
      */
     @Override
-    public void bindView(View view, Context context, Cursor cursor) {
+    public void bindView(View view, final Context context, Cursor cursor) {
         // Find individual views that we want to modify in the list item layout
         TextView nameTextView = (TextView) view.findViewById(R.id.name);
         TextView priceTextView = (TextView) view.findViewById(R.id.price);
         final TextView quantityTextView = (TextView) view.findViewById(R.id.quantity);
-        Button saleButton = (Button) view.findViewById(R.id.sale_button);
+        final int index = cursor.getColumnIndex(BookEntry._ID);
 
         // Find the columns of book attributes that we're interested in
         int nameColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_PRODUCT_NAME);
         int priceColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_PRICE);
         final int quantityColumnIndex = cursor.getColumnIndex(BookEntry.COLUMN_QUANTITY);
+        final int id = cursor.getInt(index);
 
         // Read the book attributes from the Cursor for the current book
         String productName = cursor.getString(nameColumnIndex);
@@ -75,6 +80,7 @@ public class BookCursorAdapter extends CursorAdapter {
         nameTextView.setText(productName);
         priceTextView.setText(price);
         quantityTextView.setText(quantity);
+        Button saleButton = (Button) view.findViewById(R.id.sale_button);
 
         // Setup OnClickListener for the sale button to decrease quantity by 1
 
@@ -82,11 +88,18 @@ public class BookCursorAdapter extends CursorAdapter {
             @Override
             public void onClick(View view) {
                 int updatedQuantity = Integer.parseInt(quantity);
-                if (updatedQuantity == 0) {
-                    return;
-                } else {
-                    updatedQuantity = updatedQuantity - 1;
+                if (updatedQuantity > 0) {
+                    updatedQuantity--;
+                    ContentValues values = new ContentValues();
+                    values.put(BookEntry.COLUMN_QUANTITY, updatedQuantity);
+                    Uri newUri = ContentUris.withAppendedId(BookEntry.CONTENT_URI, id);
+                    context.getContentResolver().update(newUri, values, null, null);
                     quantityTextView.setText(Integer.toString(updatedQuantity));
+                } else {
+                    Toast.makeText(context, R.string.below_zero,
+                            Toast.LENGTH_SHORT).show();
+
+
                 }
             }
         });

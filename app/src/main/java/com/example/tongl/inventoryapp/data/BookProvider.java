@@ -124,10 +124,10 @@ public class BookProvider extends ContentProvider {
             throw new IllegalArgumentException("Product requires a price");
         }
 
-        // Check that quantity is greater than or equal to 0
+        // Check that quantity is greater than or equal to 0 and not null
         Integer quantity = values.getAsInteger(BookEntry.COLUMN_QUANTITY);
-        if (quantity != null && quantity < 0) {
-            throw new IllegalArgumentException("Product cannot be negative");
+        if (quantity == null || quantity < 0) {
+            throw new IllegalArgumentException("Product cannot be left empty or under zero");
         }
 
         // Check that the supplier is not null
@@ -139,13 +139,13 @@ public class BookProvider extends ContentProvider {
         // Check that the supplier's phone number is not null
         String phoneNumber = values.getAsString(BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER);
         if (phoneNumber == null) {
-            throw new IllegalArgumentException("Supplier requires a phone number");
+            throw new IllegalArgumentException("Supplier requires a valid phone number");
         }
 
         // Get writeable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
 
-        // Insert the new pet with the given values
+        // Insert the new book with the given values
         long id = database.insert(BookEntry.TABLE_NAME, null, values);
         // If the ID is -1, then the insertion failed. Log an error and return null.
         if (id == -1) {
@@ -153,7 +153,7 @@ public class BookProvider extends ContentProvider {
             return null;
         }
 
-        // Notify all listeners that the data has changed for the pet content URI
+        // Notify all listeners that the data has changed for the book content URI
         getContext().getContentResolver().notifyChange(uri, null);
 
         // Return the new URI with the ID (of the newly inserted row) appended at the end
@@ -166,25 +166,25 @@ public class BookProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case BOOKS:
-                return updatePet(uri, contentValues, selection, selectionArgs);
+                return updateBook(uri, contentValues, selection, selectionArgs);
             case BOOK_ID:
-                // For the PET_ID code, extract out the ID from the URI,
+                // For the BOOK_ID code, extract out the ID from the URI,
                 // so we know which row to update. Selection will be "_id=?" and selection
                 // arguments will be a String array containing the actual ID.
                 selection = BookEntry._ID + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
-                return updatePet(uri, contentValues, selection, selectionArgs);
+                return updateBook(uri, contentValues, selection, selectionArgs);
             default:
                 throw new IllegalArgumentException("Update is not supported for " + uri);
         }
     }
 
     /**
-     * Update pets in the database with the given content values. Apply the changes to the rows
-     * specified in the selection and selection arguments (which could be 0 or 1 or more pets).
+     * Update books in the database with the given content values. Apply the changes to the rows
+     * specified in the selection and selection arguments (which could be 0 or 1 or more books).
      * Return the number of rows that were successfully updated.
      */
-    private int updatePet(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+    private int updateBook(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         // If the {@link BookEntry#COLUMN_PRODUCT_NAME} key is present,
         // check that the name value is not null.
         if (values.containsKey(BookEntry.COLUMN_PRODUCT_NAME)) {
@@ -194,17 +194,42 @@ public class BookProvider extends ContentProvider {
             }
         }
 
-
         // If the {@link BookEntry#COLUMN_QUANTITY} key is present,
         // check that the quantity value is valid.
         if (values.containsKey(BookEntry.COLUMN_QUANTITY)) {
-            // Check that the quantity is greater than or equal to 0
+            // Check that the quantity is greater than or equal to 0 and not null
             Integer quantity = values.getAsInteger(BookEntry.COLUMN_QUANTITY);
-            if (quantity != null && quantity < 0) {
-                throw new IllegalArgumentException("Quantity cannot be negative");
+            if (quantity == null || quantity < 0) {
+                throw new IllegalArgumentException("Product cannot be left empty or under zero");
             }
         }
 
+        // If the {@link BookEntry#COLUMN_PRICE} key is present,
+        // check that the price value is not null.
+        if (values.containsKey(BookEntry.COLUMN_PRICE)) {
+            String price = values.getAsString(BookEntry.COLUMN_PRICE);
+            if (price == null) {
+                throw new IllegalArgumentException("Product requires a price");
+            }
+        }
+
+        // If the {@link BookEntry#COLUMN_SUPPLIER_NAME} key is present,
+        // check that the supplier value is not null.
+        if (values.containsKey(BookEntry.COLUMN_SUPPLIER_NAME)) {
+            String supplier = values.getAsString(BookEntry.COLUMN_SUPPLIER_NAME);
+            if (supplier == null) {
+                throw new IllegalArgumentException("Product requires a supplier");
+            }
+        }
+
+        // If the {@link BookEntry#COLUMN_SUPPLIER_PHONE_NUMBER} key is present,
+        // check that the phone number value is not null.
+        if (values.containsKey(BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER)) {
+            String phoneNumber = values.getAsString(BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER);
+            if (phoneNumber == null) {
+                throw new IllegalArgumentException("Supplier requires a valid phone number");
+            }
+        }
 
         // If there are no values to update, then don't try to update the database
         if (values.size() == 0) {

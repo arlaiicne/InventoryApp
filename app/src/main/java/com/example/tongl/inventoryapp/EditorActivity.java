@@ -21,7 +21,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.tongl.inventoryapp.data.BookContract;
 import com.example.tongl.inventoryapp.data.BookContract.BookEntry;
 
 public class EditorActivity extends AppCompatActivity implements
@@ -129,10 +128,10 @@ public class EditorActivity extends AppCompatActivity implements
         mSubtractOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
-                if (quantity <= 0) {
+                if (TextUtils.isEmpty(mQuantityEditText.getText().toString())) {
                     return;
                 } else {
+                    int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
                     quantity = quantity - 1;
                     mQuantityEditText.setText(Integer.toString(quantity));
                 }
@@ -142,9 +141,12 @@ public class EditorActivity extends AppCompatActivity implements
         mAddOne.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
-                quantity = quantity + 1;
-                mQuantityEditText.setText(Integer.toString(quantity));
+                if (TextUtils.isEmpty(mQuantityEditText.getText().toString())) {
+                } else {
+                    int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
+                    quantity = quantity + 1;
+                    mQuantityEditText.setText(Integer.toString(quantity));
+                }
             }
         });
 
@@ -200,17 +202,17 @@ public class EditorActivity extends AppCompatActivity implements
         // Create a ContentValues object where column names are the keys,
         // and book attributes from the editor are the values.
         ContentValues values = new ContentValues();
-        values.put(BookContract.BookEntry.COLUMN_PRODUCT_NAME, nameString);
-        values.put(BookContract.BookEntry.COLUMN_PRICE, priceString);
+        values.put(BookEntry.COLUMN_PRODUCT_NAME, nameString);
+        values.put(BookEntry.COLUMN_PRICE, priceString);
         // If the quantity is not provided by the user, don't try to parse the string into an
         // integer value. Use 0 by default.
         int quantity = 0;
         if (!TextUtils.isEmpty(quantityString)) {
             quantity = Integer.parseInt(quantityString);
         }
-        values.put(BookContract.BookEntry.COLUMN_QUANTITY, quantity);
-        values.put(BookContract.BookEntry.COLUMN_SUPPLIER_NAME, supplierString);
-        values.put(BookContract.BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER, phoneNumberString);
+        values.put(BookEntry.COLUMN_QUANTITY, quantity);
+        values.put(BookEntry.COLUMN_SUPPLIER_NAME, supplierString);
+        values.put(BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER, phoneNumberString);
 
         // Determine if this is a new or existing book by checking if mCurrentBookUri is null or not
         if (mCurrentBookUri == null) {

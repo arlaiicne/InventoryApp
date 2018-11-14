@@ -98,4 +98,7 @@
     <!-- Label for call button [CHAR LIMIT=30] -->
     <string name="call">Call Supplier</string>
 
+    <!-- Toast for below zero [CHAR LIMIT=30] -->
+    <string name="below_zero">Quantity cannot be under zero.</string>
+
 </resources>

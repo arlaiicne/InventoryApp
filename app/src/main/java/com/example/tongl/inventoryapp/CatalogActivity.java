@@ -96,7 +96,7 @@ public class CatalogActivity extends AppCompatActivity implements
         // and book attributes are the values.
         ContentValues values = new ContentValues();
         values.put(BookEntry.COLUMN_PRODUCT_NAME, "Fantastic Beasts");
-        values.put(BookEntry.COLUMN_PRICE, "$25.75");
+        values.put(BookEntry.COLUMN_PRICE, "25.75");
         values.put(BookEntry.COLUMN_QUANTITY, 1);
         values.put(BookEntry.COLUMN_SUPPLIER_NAME, "Barnes and Noble");
         values.put(BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER, "(213) 645-9087");
