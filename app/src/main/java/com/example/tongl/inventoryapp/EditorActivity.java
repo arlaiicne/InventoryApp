@@ -144,9 +144,12 @@ public class EditorActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 if (TextUtils.isEmpty(mQuantityEditText.getText().toString())) {
+                    return;
                 } else {
                     int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
-                    quantity = quantity + 1;
+                    if (quantity < 999999999) {
+                        quantity = quantity + 1;
+                    }
                     mQuantityEditText.setText(Integer.toString(quantity));
                 }
             }
@@ -190,16 +193,7 @@ public class EditorActivity extends AppCompatActivity implements
         String supplierString = mSupplierEditText.getText().toString().trim();
         String phoneNumberString = mPhoneNumberEditText.getText().toString().trim();
 
-        // Check if this is supposed to be a new book
-        // and check if all the fields in the editor are blank
-        if (mCurrentBookUri == null &&
-                TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
-                TextUtils.isEmpty(quantityString) && TextUtils.isEmpty(supplierString) &&
-                TextUtils.isEmpty(phoneNumberString)) {
-            // Since no fields were modified, we can return early without saving.
-            // No need to create ContentValues and no need to do any ContentProvider operations.
-            return;
-        }
+        // Check if fields in the editor are blank
 
         if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString) ||
                 TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(supplierString) ||
@@ -259,6 +253,8 @@ public class EditorActivity extends AppCompatActivity implements
                         Toast.LENGTH_SHORT).show();
             }
         }
+        // Exit activity
+        finish();
     }
 
     @Override
@@ -292,8 +288,6 @@ public class EditorActivity extends AppCompatActivity implements
             case R.id.action_save:
                 // Save book to database
                 saveBook();
-                // Exit activity
-                finish();
                 return true;
             // Respond to a click on the "Delete" menu option
             case R.id.action_delete:

@@ -89,7 +89,7 @@ public class BookCursorAdapter extends CursorAdapter {
             public void onClick(View view) {
                 int updatedQuantity = Integer.parseInt(quantity);
                 if (updatedQuantity > 0) {
-                    updatedQuantity--;
+                    updatedQuantity = updatedQuantity - 1;
                     ContentValues values = new ContentValues();
                     values.put(BookEntry.COLUMN_QUANTITY, updatedQuantity);
                     Uri newUri = ContentUris.withAppendedId(BookEntry.CONTENT_URI, id);
