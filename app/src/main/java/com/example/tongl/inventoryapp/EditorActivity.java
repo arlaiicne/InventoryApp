@@ -132,7 +132,9 @@ public class EditorActivity extends AppCompatActivity implements
                     return;
                 } else {
                     int quantity = Integer.parseInt(mQuantityEditText.getText().toString());
-                    quantity = quantity - 1;
+                    if (quantity > 0) {
+                        quantity = quantity - 1;
+                    }
                     mQuantityEditText.setText(Integer.toString(quantity));
                 }
             }
@@ -188,7 +190,7 @@ public class EditorActivity extends AppCompatActivity implements
         String supplierString = mSupplierEditText.getText().toString().trim();
         String phoneNumberString = mPhoneNumberEditText.getText().toString().trim();
 
-        // Check if this is supposed to be a new pet
+        // Check if this is supposed to be a new book
         // and check if all the fields in the editor are blank
         if (mCurrentBookUri == null &&
                 TextUtils.isEmpty(nameString) && TextUtils.isEmpty(priceString) &&
@@ -196,6 +198,14 @@ public class EditorActivity extends AppCompatActivity implements
                 TextUtils.isEmpty(phoneNumberString)) {
             // Since no fields were modified, we can return early without saving.
             // No need to create ContentValues and no need to do any ContentProvider operations.
+            return;
+        }
+
+        if (TextUtils.isEmpty(nameString) || TextUtils.isEmpty(priceString) ||
+                TextUtils.isEmpty(quantityString) || TextUtils.isEmpty(supplierString) ||
+                TextUtils.isEmpty(phoneNumberString)) {
+            Toast.makeText(this, R.string.empty_entries,
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -213,6 +223,7 @@ public class EditorActivity extends AppCompatActivity implements
         values.put(BookEntry.COLUMN_QUANTITY, quantity);
         values.put(BookEntry.COLUMN_SUPPLIER_NAME, supplierString);
         values.put(BookEntry.COLUMN_SUPPLIER_PHONE_NUMBER, phoneNumberString);
+
 
         // Determine if this is a new or existing book by checking if mCurrentBookUri is null or not
         if (mCurrentBookUri == null) {

@@ -101,4 +101,7 @@
     <!-- Toast for below zero [CHAR LIMIT=30] -->
     <string name="below_zero">Quantity cannot be under zero.</string>
 
+    <!-- Toast for leaving input empty [CHAR LIMIT=30] -->
+    <string name="empty_entries">All fields must be filled to save.</string>
+
 </resources>

@@ -148,7 +148,8 @@ public class CatalogActivity extends AppCompatActivity implements
                 BookEntry._ID,
                 BookEntry.COLUMN_PRODUCT_NAME,
                 BookEntry.COLUMN_PRICE,
-                BookEntry.COLUMN_QUANTITY};
+                BookEntry.COLUMN_QUANTITY
+        };
 
         // This loader will execute the ContentProvider's query method on a background thread
         return new CursorLoader(this,   // Parent activity context
